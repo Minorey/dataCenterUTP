@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --background: #121212;
+            --surface: #282828;
+            --primary: #1DB954;
+            --primary-hover: #1ed760;
+            --text: #FFFFFF;
+            --text-secondary: #b3b3b3;
+            --surface-highlight: #3E3E3E;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text);
+            font-family: 'Circular Std', Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, #212121 0%, var(--background) 100%);
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), #4CAF50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .data-input {
+            margin: 2rem 0;
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .data-input label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .data-input input {
+            background: var(--surface-highlight);
+            border: 1px solid #404040;
+            color: var(--text);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .data-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+        }
+
+        .controls {
+            margin: 2rem 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 500px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #startBtn {
+            background-color: var(--primary);
+            color: var(--background);
+        }
+
+        #startBtn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: scale(1.02);
+        }
+
+        #resetBtn {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid var(--text-secondary);
+        }
+
+        #resetBtn:hover {
+            border-color: var(--text);
+            transform: scale(1.02);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .disk-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .disk {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .disk.active {
+            background: var(--surface-highlight);
+            box-shadow: 0 8px 16px rgba(29, 185, 84, 0.2);
+        }
+
+        .disk-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .disk-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .bit {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--surface);
+            border: 2px solid var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bit.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--background);
+            transform: scale(1.1);
+        }
+
+        .progress-steps {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .step {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+            display: inline-block;
+        }
+
+        .step.completed {
+            color: var(--primary);
+        }
+
+        .step.completed::before {
+            background-color: var(--primary);
+        }
+
+        .status {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .disk-container {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 1rem;
+            }
+
+            .bit {
+                width: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RAID 2 Simulator</h1>
+        
+        <div class="data-input">
+            <label>Input Data (8 bits)</label>
+            <input type="text" id="dataInput" value="10101010" maxlength="8" pattern="[0-1]{8}" placeholder="e.g. 10101010">
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">Start Simulation</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+
+        <div class="disk-container">
+            <div class="disk" id="disk0">
+                <div class="disk-title">Disk 1</div>
+                <div class="disk-content"></div>
+            </div>
+            <div class="disk" id="disk1">
+                <div class="disk-title">Disk 2</div>
+                <div class="disk-content"></div>
+            </div>
+            <div class="disk" id="disk2">
+                <div class="disk-title">Disk 3</div>
+                <div class="disk-content"></div>
+            </div>
+            <div class="disk" id="disk3">
+                <div class="disk-title">Disk 4</div>
+                <div class="disk-content"></div>
+            </div>
+            <div class="disk" id="parity0">
+                <div class="disk-title">Parity 1</div>
+                <div class="disk-content"></div>
+            </div>
+            <div class="disk" id="parity1">
+                <div class="disk-title">Parity 2</div>
+                <div class="disk-content"></div>
+            </div>
+            <div class="disk" id="parity2">
+                <div class="disk-title">Parity 3</div>
+                <div class="disk-content"></div>
+            </div>
+        </div>
+
+        <div class="progress-steps">
+            <div class="step" id="step1">Initializing RAID 2 System</div>
+            <div class="step" id="step2">Preparing Disks</div>
+            <div class="step" id="step3">Splitting Data into Bits</div>
+            <div class="step" id="step4">Calculating Parity</div>
+            <div class="step" id="step5">Writing to Disks</div>
+        </div>
+
+        <div class="status" id="status">
+            Status: Ready to start
+        </div>
+    </div>
+
+    <script>
+        // Your existing JavaScript code remains the same
+        class RAID2Simulator {
+            constructor() {
+                this.currentStep = 0;
+                this.running = false;
+                this.disks = Array(4).fill().map(() => []);
+                this.parityDisks = Array(3).fill().map(() => []);
+            }
+
+            calculateParity(bits) {
+                const p1 = bits[0] ^ bits[1] ^ bits[3];
+                const p2 = bits[0] ^ bits[2] ^ bits[3];
+                const p3 = bits[1] ^ bits[2] ^ bits[3];
+                return [p1, p2, p3];
+            }
+
+            async simulate(dataByte) {
+                this.running = true;
+                const steps = [
+                    async () => {
+                        this.updateStatus('Initializing RAID 2 system');
+                        await this.delay(1000);
+                    },
+                    async () => {
+                        this.updateStatus('Preparing disks');
+                        this.activateDisks();
+                        await this.delay(1000);
+                    },
+                    async () => {
+                        this.updateStatus('Splitting data into bits');
+                        this.showBits(dataByte);
+                        await this.delay(1000);
+                    },
+                    async () => {
+                        this.updateStatus('Calculating parity');
+                        this.calculateAndShowParity(dataByte);
+                        await this.delay(1000);
+                    },
+                    async () => {
+                        this.updateStatus('Write operation completed');
+                        this.highlightAll();
+                        await this.delay(1000);
+                    }
+                ];
+
+                for (let i = 0; i < steps.length && this.running; i++) {
+                    this.currentStep = i + 1;
+                    this.updateSteps();
+                    await steps[i]();
+                }
+                
+                this.running = false;
+                document.getElementById('startBtn').disabled = false;
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            updateStatus(message) {
+                document.getElementById('status').textContent = `Status: ${message}`;
+            }
+
+            activateDisks() {
+                document.querySelectorAll('.disk').forEach(disk => {
+                    disk.classList.add('active');
+                });
+            }
+
+            showBits(dataByte) {
+                const bits = dataByte.split('');
+                for (let i = 0; i < 4; i++) {
+                    const diskContent = document.querySelector(`#disk${i} .disk-content`);
+                    const bit = document.createElement('div');
+                    bit.className = `bit ${bits[i] === '1' ? 'active' : ''}`;
+                    bit.textContent = bits[i];
+                    diskContent.appendChild(bit);
+                }
+            }
+
+            calculateAndShowParity(dataByte) {
+                const bits = dataByte.slice(0, 4).split('').map(Number);
+                const parity = this.calculateParity(bits);
+                
+                parity.forEach((p, i) => {
+                    const parityContent = document.querySelector(`#parity${i} .disk-content`);
+                    const bit = document.createElement('div');
+                    bit.className = `bit ${p ? 'active' : ''}`;
+                    bit.textContent = p;
+                    parityContent.appendChild(bit);
+                });
+            }
+
+            highlightAll() {
+                document.querySelectorAll('.bit').forEach(bit => {
+                    bit.style.transform = 'scale(1.1)';
+                });
+            }
+
+            updateSteps() {
+                document.querySelectorAll('.step').forEach((step, index) => {
+                    if (index < this.currentStep) {
+                        step.classList.add('completed');
+                    } else {
+                        step.classList.remove('completed');
+                    }
+                });
+            }
+
+            reset() {
+                this.running = false;
+                this.currentStep = 0;
+                document.querySelectorAll('.disk-content').forEach(content => {
+                    content.innerHTML = '';
+                });
+                document.querySelectorAll('.disk').forEach(disk => {
+                    disk.classList.remove('active');
+                });
+                document.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('completed');
+                });
+                this.updateStatus('Ready to start');
+                document.getElementById('startBtn').disabled = false;
+            }
+        }
+
+        // Initialize and set up events
+        const simulator = new RAID2Simulator();
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            const dataInput = document.getElementById('dataInput');
+            if (!/^[0-1]{8}$/.test(dataInput.value)) {
+                alert('Please enter 8 valid bits (0s and 1s)');
+                return;
+            }
+            document.getElementById('startBtn').disabled = true;
+            await simulator.simulate(dataInput.value);
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            simulator.reset();
+        });
+
+        document.getElementById('dataInput').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-1]/g, '');
+        });
+    </script>
+</body>
+</html>

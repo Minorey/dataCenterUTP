@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #121212;
+            --spotify-light-black: #282828;
+            --spotify-white: #FFFFFF;
+            --spotify-grey: #B3B3B3;
+        }
+
+        body {
+            font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(transparent 0, var(--spotify-black) 100%) var(--spotify-light-black);
+            color: var(--spotify-white);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 24px;
+            letter-spacing: -0.04em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            align-items: center;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 4px;
+            border: none;
+            background-color: var(--spotify-light-black);
+            color: var(--spotify-white);
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--spotify-green);
+        }
+
+        button {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 500px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        button:hover {
+            transform: scale(1.04);
+            background-color: #1ed760;
+        }
+
+        .raid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .disk {
+            background-color: var(--spotify-light-black);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .disk-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            color: var(--spotify-grey);
+            font-size: 14px;
+        }
+
+        .blocks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .block {
+            background-color: var(--spotify-black);
+            padding: 12px;
+            border-radius: 4px;
+            color: var(--spotify-grey);
+            font-family: monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .block.active {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+        }
+
+        .stats {
+            background-color: var(--spotify-light-black);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--spotify-green);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--spotify-grey);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1>RAID 0 Simulator</h1>
+        
+        <div class="controls">
+            <input type="text" id="dataInput" placeholder="Escribe los datos a distribuir...">
+            <button onclick="writeData()">Escribir</button>
+            <button onclick="clearData()" style="background-color: var(--spotify-light-black);">Limpiar</button>
+        </div>
+
+        <div class="raid-container">
+            <div class="disk">
+                <div class="disk-header">
+                    <span>Disco 1</span>
+                    <span id="disk1-blocks">0 bloques</span>
+                </div>
+                <div class="blocks-container" id="disk0"></div>
+            </div>
+            <div class="disk">
+                <div class="disk-header">
+                    <span>Disco 2</span>
+                    <span id="disk2-blocks">0 bloques</span>
+                </div>
+                <div class="blocks-container" id="disk1"></div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="totalBlocks">0</div>
+                <div class="stat-label">Bloques Totales</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="usedSpace">0%</div>
+                <div class="stat-label">Espacio Utilizado</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BLOCK_SIZE = 4;
+        const MAX_BLOCKS = 8;
+        let currentBlock = 0;
+
+        function writeData() {
+            const input = document.getElementById('dataInput').value;
+            if (!input) return;
+
+            const blocks = Math.ceil(input.length / BLOCK_SIZE);
+            if (currentBlock + blocks > MAX_BLOCKS) {
+                alert('No hay suficiente espacio disponible');
+                return;
+            }
+
+            for (let i = 0; i < blocks; i++) {
+                const start = i * BLOCK_SIZE;
+                const end = start + BLOCK_SIZE;
+                const blockData = input.substring(start, end).padEnd(BLOCK_SIZE, ' ');
+                
+                const diskIndex = currentBlock % 2;
+                const disk = document.getElementById(`disk${diskIndex}`);
+                
+                const block = document.createElement('div');
+                block.className = 'block';
+                block.textContent = blockData;
+                disk.appendChild(block);
+
+                setTimeout(() => {
+                    block.classList.add('active');
+                }, i * 100);
+
+                currentBlock++;
+            }
+
+            updateStats();
+            document.getElementById('dataInput').value = '';
+        }
+
+        function clearData() {
+            document.getElementById('disk0').innerHTML = '';
+            document.getElementById('disk1').innerHTML = '';
+            currentBlock = 0;
+            updateStats();
+        }
+
+        function updateStats() {
+            const totalBlocks = document.getElementById('totalBlocks');
+            const usedSpace = document.getElementById('usedSpace');
+            const disk1Blocks = document.getElementById('disk1-blocks');
+            const disk2Blocks = document.getElementById('disk2-blocks');
+            
+            totalBlocks.textContent = currentBlock;
+            const usedPercentage = (currentBlock / (MAX_BLOCKS * 2)) * 100;
+            usedSpace.textContent = `${Math.round(usedPercentage)}%`;
+
+            const disk1Count = Math.ceil(currentBlock / 2);
+            const disk2Count = Math.floor(currentBlock / 2);
+            disk1Blocks.textContent = `${disk1Count} bloques`;
+            disk2Blocks.textContent = `${disk2Count} bloques`;
+        }
+
+        updateStats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        /* ... (estilos anteriores permanecen igual hasta .chart-container) ... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #1DB954;
+            --bg-main: #121212;
+            --bg-card: #181818;
+            --bg-hover: #282828;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-item {
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-hover);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: black;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .server-status {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .cloud-services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .service-card {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 15px;
+            transition: transform 0.3s;
+            height: 200px; /* Altura fija para las tarjetas */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            background-color: var(--bg-hover);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .service-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .service-status {
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .chart-wrapper {
+            flex: 1;
+            position: relative;
+            height: 80px; /* Altura fija para el gráfico mini */
+        }
+
+        .usage-bar {
+            height: 6px;
+            background-color: var(--bg-hover);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .chart-container {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 15px;
+            height: 400px; /* Altura fija para los contenedores de gráficos */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .chart-content {
+            flex: 1;
+            position: relative;
+            height: 250px; /* Altura fija para los gráficos grandes */
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background-color: var(--bg-hover);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-brand">CloudPanel</div>
+        <div class="nav-menu">
+            <div class="nav-item active">Dashboard</div>
+            <div class="nav-item">Nube Privada</div>
+            <div class="nav-item">Nube Pública</div>
+            <div class="nav-item">Configuración</div>
+        </div>
+    </nav>
+
+    <div class="dashboard-header">
+        <h1>Monitor de Recursos</h1>
+        <div class="server-status">
+            <div class="status-dot"></div>
+            <span>Todos los sistemas operativos</span>
+        </div>
+    </div>
+
+    <div class="cloud-services">
+        <div class="service-card">
+            <div class="service-header">
+                <div class="service-title">CPU</div>
+                <div class="service-status" id="cpu-status">75%</div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="cpuChart"></canvas>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="cpu-bar" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-header">
+                <div class="service-title">Memoria</div>
+                <div class="service-status" id="memory-status">64%</div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="memoryChart"></canvas>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="memory-bar" style="width: 64%"></div>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="service-header">
+                <div class="service-title">Almacenamiento</div>
+                <div class="service-status" id="storage-status">42%</div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="storageChart"></canvas>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="storage-bar" style="width: 42%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-container">
+            <div class="chart-header">Rendimiento en Tiempo Real</div>
+            <div class="chart-content">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-header">Distribución de Recursos</div>
+            <div class="chart-content">
+                <canvas id="resourcesChart"></canvas>
+            </div>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-value">854</div>
+                    <div class="stat-label">Instancias</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">98.2%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1.2 TB</div>
+                    <div class="stat-label">Datos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para generar datos aleatorios
+        function generateRandomData(count) {
+            return Array.from({length: count}, () => Math.random() * 100);
+        }
+
+        // Configuración común para gráficos mini
+        const miniChartConfig = {
+            type: 'line',
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                },
+                maintainAspectRatio: false,
+                responsive: true,
+                elements: {
+                    line: {
+                        tension: 0.4,
+                        borderWidth: 2,
+                        borderColor: '#1DB954'
+                    },
+                    point: {
+                        radius: 0
+                    }
+                }
+            }
+        };
+
+        // Crear gráficos mini
+        function createMiniChart(canvasId) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
+                ...miniChartConfig,
+                data: {
+                    labels: Array(10).fill(''),
+                    datasets: [{
+                        data: generateRandomData(10),
+                        fill: false
+                    }]
+                }
+            });
+        }
+
+        const cpuChart = createMiniChart('cpuChart');
+        const memoryChart = createMiniChart('memoryChart');
+        const storageChart = createMiniChart('storageChart');
+
+        // Gráfico de rendimiento
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(perfCtx, {
+            type: 'line',
+            data: {
+                labels: ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m'],
+                datasets: [{
+                    label: 'CPU',
+                    data: generateRandomData(8),
+                    borderColor: '#1DB954'
+                }, {
+                    label: 'Memoria',
+                    data: generateRandomData(8),
+                    borderColor: '#4CAF50'
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#ffffff' }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: { color: '#b3b3b3' },
+                        grid: { color: '#282828' }
+                    },
+                    x: {
+                        ticks: { color: '#b3b3b3' },
+                        grid: { color: '#282828' }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de recursos
+        const resCtx = document.getElementById('resourcesChart').getContext('2d');
+        new Chart(resCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Nube Privada', 'Nube Pública', 'Bases de Datos', 'Almacenamiento'],
+                datasets: [{
+                    data: [40, 30, 20, 10],
+                    backgroundColor: ['#1DB954', '#4CAF50', '#2196F3', '#9C27B0']
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#ffffff' }
+                    }
+                }
+            }
+        });
+
+        // Actualización de datos en tiempo real
+        function updateMetrics() {
+            const metrics = {
+                cpu: Math.floor(Math.random() * 100),
+                memory: Math.floor(Math.random() * 100),
+                storage: Math.floor(Math.random() * 100)
+            };
+
+            // Actualizar barras y textos
+            document.getElementById('cpu-status').textContent = metrics.cpu + '%';
+            document.getElementById('cpu-bar').style.width = metrics.cpu + '%';
+            
+            document.getElementById('memory-status').textContent = metrics.memory + '%';
+            document.getElementById('memory-bar').style.width = metrics.memory + '%';
+            
+            document.getElementById('storage-status').textContent = metrics.storage + '%';
+            document.getElementById('storage-bar').style.width = metrics.storage + '%';
+
+            // Actualizar gráficos
+            [cpuChart, memoryChart, storageChart].forEach(chart => {
+                chart.data.datasets[0].data.shift();
+                chart.data.datasets[0].data.push(Math.random() * 100);
+                chart.update();
+            });
+        }
+
+        // Actualizar cada 3 segundos
+        setInterval(updateMetrics, 3000);
+
+        // Interactividad del menú
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

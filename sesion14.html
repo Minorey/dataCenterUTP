@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Computing Dashboard</title>
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-white: #FFFFFF;
+            --spotify-grey: #282828;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+        }
+
+        .navbar {
+            background-color: var(--spotify-grey);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: var(--spotify-green);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .main-container {
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background-color: var(--spotify-grey);
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: var(--spotify-green);
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        .btn {
+            background-color: var(--spotify-green);
+            color: var(--spotify-white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1ed760;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--spotify-black);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--spotify-green);
+            transition: width 0.3s ease;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            background-color: var(--spotify-green);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">CloudifyPRO</div>
+        <button class="btn" onclick="refreshMetrics()">Actualizar</button>
+    </nav>
+
+    <div class="main-container">
+        <h1>Panel de Control - Nube Privada</h1>
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>CPU</h3>
+                <div class="metric" id="cpuUsage">0%</div>
+                <div class="progress-bar">
+                    <div class="progress" id="cpuBar" style="width: 0%"></div>
+                </div>
+                <p>Uso actual del procesador</p>
+            </div>
+
+            <div class="card">
+                <h3>Memoria RAM</h3>
+                <div class="metric" id="ramUsage">0GB</div>
+                <div class="progress-bar">
+                    <div class="progress" id="ramBar" style="width: 0%"></div>
+                </div>
+                <p>Memoria en uso</p>
+            </div>
+
+            <div class="card">
+                <h3>Almacenamiento</h3>
+                <div class="metric" id="storageUsage">0TB</div>
+                <div class="progress-bar">
+                    <div class="progress" id="storageBar" style="width: 0%"></div>
+                </div>
+                <p>Espacio utilizado</p>
+            </div>
+
+            <div class="card">
+                <h3>Máquinas Virtuales</h3>
+                <div class="metric" id="vmCount">0</div>
+                <p>Instancias activas</p>
+                <button class="btn" onclick="deployVM()">Desplegar nueva VM</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getRandomPercentage() {
+            return Math.floor(Math.random() * 100);
+        }
+
+        function updateMetric(elementId, barId, value) {
+            document.getElementById(elementId).textContent = value;
+            document.getElementById(barId).style.width = value;
+        }
+
+        function refreshMetrics() {
+            const cpuUsage = getRandomPercentage();
+            const ramUsage = getRandomPercentage();
+            const storageUsage = getRandomPercentage();
+
+            updateMetric('cpuUsage', 'cpuBar', cpuUsage + '%');
+            updateMetric('ramUsage', 'ramBar', Math.floor(ramUsage * 0.32) + 'GB');
+            updateMetric('storageUsage', 'storageBar', (storageUsage * 0.1).toFixed(1) + 'TB');
+        }
+
+        let vmCount = 0;
+        function deployVM() {
+            vmCount++;
+            document.getElementById('vmCount').textContent = vmCount;
+            alert('Nueva máquina virtual desplegada exitosamente!');
+        }
+
+        // Actualizar métricas cada 5 segundos
+        setInterval(refreshMetrics, 5000);
+        
+        // Inicializar con datos
+        refreshMetrics();
+    </script>
+</body>
+</html>

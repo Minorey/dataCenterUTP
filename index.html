@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Center Learning</title>
+    <style>
+        :root {
+            --spotify-black: #191414;
+            --spotify-green: #1DB954;
+            --spotify-dark-gray: #282828;
+            --spotify-light-gray: #B3B3B3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: white;
+        }
+
+        header {
+            background-color: var(--spotify-dark-gray);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--spotify-green);
+        }
+
+        .hero {
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('img/hero.png');
+            background-size: cover;
+            background-position: center;
+            margin-top: 60px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--spotify-light-gray);
+        }
+
+        .services {
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--spotify-dark-gray);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            background-color: #333;
+        }
+
+        .card h3 {
+            color: var(--spotify-green);
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--spotify-light-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--spotify-green);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1ed760;
+        }
+
+        footer {
+            background-color: var(--spotify-dark-gray);
+            padding: 2rem;
+            text-align: center;
+            color: var(--spotify-light-gray);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .services {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Data Center</div>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Soluciones de Data Center</h1>
+            <p>Infraestructura moderna para tus necesidades empresariales</p>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="card">
+            <h3>S11 - Raid 0</h3>
+            <p>Aprende sobre raid 0 y su lectura/escritura</p>
+            <a href="sesion11.html" class="btn">Más información</a>
+        </div>
+
+        <div class="card">
+            <h3>S12 - raid 0 raid 0+1</h3>
+            <p>Protección de datos con raid 0</p>
+            <a href="sesion12.html" class="btn">Más información</a>
+        </div>
+
+        <div class="card">
+            <h3>S13 - RAID 2</h3>
+            <p>Simula tus recursos con soluciones RAID 2</p>
+            <a href="sesion13.html" class="btn">Más información</a>
+        </div>
+
+        <div class="card">
+            <h3>S14 - Cloud Computing (Dashboard)</h3>
+            <p>Servicios en la nube escalables y seguros para el publico</p>
+            <a href="sesion14.html" class="btn">Más información</a>
+        </div>
+        
+        
+        <div class="card">
+            <h3>S15 - Cloud Computing (PUB OR PRI) </h3>
+            <p>Monitore tus recursos en tiempo real</p>
+            <a href="sesion15.html" class="btn">Más información</a>
+        </div>
+
+        <div class="card">
+            <h3>S16 - Coming soon!!!</h3>
+            <p>?????????????????????????????????????</p>
+            <a href="tu-url-backup.html" class="btn">Más información</a>
+        </div>
+
+    </section>
+
+    <footer>
+        <p>© 2024 DataCenter Class. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
