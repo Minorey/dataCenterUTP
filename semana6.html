@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Data Center</title>
+    <style>
+        :root {
+            /* Spotify Color Palette */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-light-black: #212121;
+            --spotify-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--spotify-green);
+            margin-bottom: 30px;
+        }
+
+        .simulator-section {
+            background-color: var(--spotify-light-black);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--spotify-green);
+        }
+
+        input[type="number"], 
+        select {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            border: 1px solid var(--spotify-gray);
+            border-radius: 5px;
+        }
+
+        .result {
+            background-color: var(--spotify-black);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid var(--spotify-green);
+        }
+
+        button {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1ed760;
+        }
+
+        #powerRequirementsResult,
+        #upsResult {
+            margin-top: 15px;
+            color: var(--spotify-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulador de Data Center</h1>
+        
+        <div class="simulator-section">
+            <h2>Estimación de Necesidades de Potencia</h2>
+            <div class="input-group">
+                <label for="serverCount">Número de Servidores</label>
+                <input type="number" id="serverCount" min="1" value="10">
+            </div>
+            <div class="input-group">
+                <label for="serverType">Tipo de Servidor</label>
+                <select id="serverType">
+                    <option value="low">Bajo Consumo (200W)</option>
+                    <option value="medium" selected>Consumo Medio (500W)</option>
+                    <option value="high">Alto Consumo (800W)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="networkDevices">Número de Dispositivos de Red</label>
+                <input type="number" id="networkDevices" min="0" value="5">
+            </div>
+            <button onclick="calculatePowerRequirements()">Calcular Requerimientos de Potencia</button>
+            <div id="powerRequirementsResult" class="result"></div>
+        </div>
+
+        <div class="simulator-section">
+            <h2>Simulador de UPS (Fuente de Poder Ininterrumpida)</h2>
+            <div class="input-group">
+                <label for="totalLoad">Carga Total del Data Center (W)</label>
+                <input type="number" id="totalLoad" min="1" value="5000">
+            </div>
+            <div class="input-group">
+                <label for="backupTime">Tiempo de Respaldo Deseado (Minutos)</label>
+                <input type="number" id="backupTime" min="1" value="15">
+            </div>
+            <button onclick="calculateUPSRequirements()">Calcular Requerimientos de UPS</button>
+            <div id="upsResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculatePowerRequirements() {
+            const serverCount = document.getElementById('serverCount').value;
+            const serverType = document.getElementById('serverType').value;
+            const networkDevices = document.getElementById('networkDevices').value;
+            
+            let serverWattage;
+            switch(serverType) {
+                case 'low':
+                    serverWattage = 200;
+                    break;
+                case 'medium':
+                    serverWattage = 500;
+                    break;
+                case 'high':
+                    serverWattage = 800;
+                    break;
+            }
+
+            const totalServerPower = serverCount * serverWattage;
+            const networkDevicePower = networkDevices * 50; // Asumiendo 50W por dispositivo de red
+            const totalPower = totalServerPower + networkDevicePower;
+            const peakLoadFactor = 1.2; // Factor de sobrecarga del 20%
+            const recommendedCapacity = totalPower * peakLoadFactor;
+
+            const resultDiv = document.getElementById('powerRequirementsResult');
+            resultDiv.innerHTML = `
+                <p>Consumo de Servidores: ${totalServerPower} W</p>
+                <p>Consumo de Dispositivos de Red: ${networkDevicePower} W</p>
+                <p>Consumo Total: ${totalPower} W</p>
+                <p>Capacidad Recomendada (con factor de sobrecarga): ${recommendedCapacity.toFixed(2)} W</p>
+            `;
+        }
+
+        function calculateUPSRequirements() {
+            const totalLoad = parseFloat(document.getElementById('totalLoad').value);
+            const backupTime = parseFloat(document.getElementById('backupTime').value);
+
+            // Cálculo de la capacidad de batería
+            const batteryCapacityWh = (totalLoad / 1000) * (backupTime / 60);
+            
+            // Factor de redundancia y eficiencia
+            const redundancyFactor = 1.25;
+            const upsEfficiency = 0.9;
+
+            const recommendedUPSCapacity = (batteryCapacityWh * redundancyFactor) / upsEfficiency;
+
+            const resultDiv = document.getElementById('upsResult');
+            resultDiv.innerHTML = `
+                <p>Carga Total: ${totalLoad} W</p>
+                <p>Tiempo de Respaldo: ${backupTime} minutos</p>
+                <p>Capacidad de Batería Requerida: ${batteryCapacityWh.toFixed(2)} Wh</p>
+                <p>Capacidad Recomendada de UPS: ${recommendedUPSCapacity.toFixed(2)} Wh</p>
+                <p>Recomendación: UPS con al menos ${recommendedUPSCapacity.toFixed(2)} Wh de capacidad</p>
+            `;
+        }
+    </script>
+</body>
+</html>

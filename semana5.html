@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Data Center</title>
+    <style>
+        /* Paleta de colores de Spotify */
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-gray: #282828;
+            --spotify-light-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .data-center-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background-color: var(--spotify-gray);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid var(--spotify-green);
+        }
+
+        .security-panel, .cooling-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sensor {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: var(--spotify-light-gray);
+            border-radius: 5px;
+        }
+
+        .sensor-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .status-ok {
+            background-color: var(--spotify-green);
+        }
+
+        .status-alert {
+            background-color: red;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.5; }
+        }
+
+        .air-flow-visualization {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .rack {
+            background-color: var(--spotify-light-gray);
+            border: 2px solid var(--spotify-green);
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .rack-temp {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .btn {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <div class="data-center-container">
+        <div class="section security-panel">
+            <h2>Seguridad Física y Lógica</h2>
+            <div class="sensor">
+                <span>Entrada Principal</span>
+                <div class="sensor-status status-ok"></div>
+            </div>
+            <div class="sensor">
+                <span>Cámaras de Seguridad</span>
+                <div class="sensor-status status-ok"></div>
+            </div>
+            <div class="sensor">
+                <span>Sistema de Acceso Biométrico</span>
+                <div class="sensor-status status-ok"></div>
+            </div>
+            <div class="sensor">
+                <span>Firewall</span>
+                <div class="sensor-status status-ok"></div>
+            </div>
+        </div>
+
+        <div class="section cooling-panel">
+            <h2>Sistema de Aire Acondicionado</h2>
+            <div class="sensor">
+                <span>Temperatura General</span>
+                <span>22°C</span>
+            </div>
+            <div class="sensor">
+                <span>Humedad</span>
+                <span>45%</span>
+            </div>
+            <div class="sensor">
+                <span>Estado de Enfriamiento</span>
+                <div class="sensor-status status-ok"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section air-flow-visualization">
+        <div class="rack">
+            <span>Rack 1</span>
+            <div class="rack-temp">38°C</div>
+        </div>
+        <div class="rack">
+            <span>Rack 2</span>
+            <div class="rack-temp">36°C</div>
+        </div>
+        <div class="rack">
+            <span>Rack 3</span>
+            <div class="rack-temp">37°C</div>
+        </div>
+        <div class="rack">
+            <span>Rack 4</span>
+            <div class="rack-temp">35°C</div>
+        </div>
+        <div class="rack">
+            <span>Rack 5</span>
+            <div class="rack-temp">39°C</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="simulateEmergency()">Simular Emergencia</button>
+        <button class="btn" onclick="resetSimulation()">Reiniciar Simulación</button>
+    </div>
+
+    <script>
+        function simulateEmergency() {
+            const sensors = document.querySelectorAll('.sensor-status');
+            const racks = document.querySelectorAll('.rack');
+            
+            // Cambiar algunos sensores a estado de alerta
+            sensors.forEach((sensor, index) => {
+                if (Math.random() > 0.5) {
+                    sensor.classList.remove('status-ok');
+                    sensor.classList.add('status-alert');
+                }
+            });
+
+            // Aumentar temperatura de algunos racks
+            racks.forEach(rack => {
+                const tempElement = rack.querySelector('.rack-temp');
+                let currentTemp = parseInt(tempElement.textContent);
+                tempElement.textContent = `${currentTemp + 5}°C`;
+                rack.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            });
+
+            alert('¡Emergencia simulada! Revise los sistemas de seguridad y temperatura.');
+        }
+
+        function resetSimulation() {
+            const sensors = document.querySelectorAll('.sensor-status');
+            const racks = document.querySelectorAll('.rack');
+            
+            sensors.forEach(sensor => {
+                sensor.classList.remove('status-alert');
+                sensor.classList.add('status-ok');
+            });
+
+            racks.forEach(rack => {
+                const tempElement = rack.querySelector('.rack-temp');
+                tempElement.textContent = '37°C';
+                rack.style.backgroundColor = '';
+            });
+
+            alert('Simulación reiniciada a condiciones normales.');
+        }
+    </script>
+</body>
+</html>

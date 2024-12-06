@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Planeamiento de Data Center</title>
+    <style>
+        :root {
+            /* Spotify Color Palette */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-light-black: #212121;
+            --spotify-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            color: var(--spotify-green);
+        }
+
+        section {
+            background-color: var(--spotify-light-black);
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .subsection {
+            border-left: 4px solid var(--spotify-green);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: var(--spotify-green);
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li::before {
+            content: "▶ ";
+            color: var(--spotify-green);
+            font-weight: bold;
+        }
+
+        .security-tips {
+            background-color: rgba(29, 185, 84, 0.1);
+            border: 1px solid var(--spotify-green);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        footer {
+            background-color: var(--spotify-gray);
+            color: var(--spotify-white);
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Guía Integral para el Planeamiento de Data Centers</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>Estructura del Data Center</h2>
+            <div class="subsection">
+                <h3>Componentes Principales</h3>
+                <ul>
+                    <li>Área de Servidores</li>
+                    <li>Sistema de Refrigeración</li>
+                    <li>Infraestructura Eléctrica</li>
+                    <li>Sistemas de Seguridad</li>
+                    <li>Área de Comunicaciones</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Consideraciones de Diseño</h3>
+                <ul>
+                    <li>Distribución eficiente del espacio</li>
+                    <li>Gestión de cableado</li>
+                    <li>Modularidad y escalabilidad</li>
+                    <li>Redundancia de sistemas críticos</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Planeamiento y Diseño contra Vandalismo</h2>
+            <div class="security-tips">
+                <h3 class="highlight">Estrategias de Seguridad Física</h3>
+                <ul>
+                    <li>Control de acceso biométrico</li>
+                    <li>Sistemas de videovigilancia 24/7</li>
+                    <li>Perímetro de seguridad múltiple</li>
+                    <li>Barreras físicas y electrónicas</li>
+                    <li>Protección contra intrusiones físicas</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Medidas Preventivas</h3>
+                <ul>
+                    <li>Diseño arquitectónico resistente</li>
+                    <li>Ubicación estratégica lejos de zonas de alto riesgo</li>
+                    <li>Iluminación perimetral</li>
+                    <li>Sistemas de alarma integrados</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2024 Guía de Planeamiento de Data Center | Inspirado en el estilo de Spotify</p>
+    </footer>
+
+    <script>
+        // Interactive elements can be added here
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            
+            sections.forEach(section => {
+                section.addEventListener('mouseover', () => {
+                    section.style.transform = 'scale(1.02)';
+                    section.style.transition = 'transform 0.3s ease';
+                });
+
+                section.addEventListener('mouseout', () => {
+                    section.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

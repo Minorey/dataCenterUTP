@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Infraestructura de Data Center</title>
+    <style>
+        :root {
+            /* Spotify Color Palette */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-light-black: #212121;
+            --spotify-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .simulator {
+            display: flex;
+            background-color: var(--spotify-light-black);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--spotify-gray);
+            padding: 20px;
+        }
+
+        .main-view {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+        }
+
+        .data-center-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            height: 500px;
+        }
+
+        .rack {
+            background-color: var(--spotify-black);
+            border: 2px solid var(--spotify-green);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .rack:hover {
+            transform: scale(1.05);
+        }
+
+        .cable {
+            height: 5px;
+            background-color: var(--spotify-green);
+            margin: 2px 0;
+            position: relative;
+        }
+
+        .cable-info {
+            position: absolute;
+            left: 100%;
+            background-color: var(--spotify-light-black);
+            border: 1px solid var(--spotify-green);
+            padding: 5px;
+            display: none;
+            z-index: 10;
+        }
+
+        .cable:hover .cable-info {
+            display: block;
+        }
+
+        .distribution-point {
+            background-color: var(--spotify-green);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+        }
+
+        .internet-access {
+            background-color: rgba(29, 185, 84, 0.2);
+            border: 2px dashed var(--spotify-green);
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Simulador de Infraestructura de Data Center</h1>
+    </header>
+
+    <div class="container">
+        <div class="simulator">
+            <div class="sidebar">
+                <h3>Panel de Control</h3>
+                <p>Explora la infraestructura de red del data center</p>
+                <div class="control-panel">
+                    <button id="toggleCables">Mostrar/Ocultar Cables</button>
+                    <button id="resetSimulation">Reiniciar</button>
+                </div>
+            </div>
+            
+            <div class="main-view">
+                <div class="data-center-grid" id="dataCenterGrid">
+                    <!-- Racks serán generados dinámicamente -->
+                </div>
+                
+                <div class="distribution-point" style="top: 50px; left: 200px;" title="Punto de Distribución Principal"></div>
+                <div class="distribution-point" style="bottom: 50px; right: 200px;" title="Punto de Distribución Secundario"></div>
+                
+                <div class="internet-access">
+                    <h3>Acceso a Internet</h3>
+                    <p>Conexión principal: Fibra óptica redundante</p>
+                    <p>Ancho de banda: 10 Gbps</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dataCenterGrid = document.getElementById('dataCenterGrid');
+            const toggleCablesBtn = document.getElementById('toggleCables');
+            const resetSimulationBtn = document.getElementById('resetSimulation');
+
+            // Generar racks
+            function generateRacks() {
+                dataCenterGrid.innerHTML = '';
+                for (let i = 0; i < 25; i++) {
+                    const rack = document.createElement('div');
+                    rack.classList.add('rack');
+                    rack.innerHTML = `
+                        <div class="rack-id">Rack ${i + 1}</div>
+                        <div class="cables" style="display:none;">
+                            <div class="cable">
+                                <span class="cable-info">Conexión de red principal</span>
+                            </div>
+                            <div class="cable">
+                                <span class="cable-info">Conexión de energía</span>
+                            </div>
+                            <div class="cable">
+                                <span class="cable-info">Conexión de almacenamiento</span>
+                            </div>
+                        </div>
+                    `;
+                    dataCenterGrid.appendChild(rack);
+                }
+            }
+
+            // Toggle visibility of cables
+            toggleCablesBtn.addEventListener('click', () => {
+                const cables = document.querySelectorAll('.cables');
+                cables.forEach(cableGroup => {
+                    cableGroup.style.display = 
+                        cableGroup.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+
+            // Reset simulation
+            resetSimulationBtn.addEventListener('click', () => {
+                generateRacks();
+                const cables = document.querySelectorAll('.cables');
+                cables.forEach(cableGroup => {
+                    cableGroup.style.display = 'none';
+                });
+            });
+
+            // Initial generation of racks
+            generateRacks();
+        });
+    </script>
+</body>
+</html>

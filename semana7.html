@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Data Center</title>
+    <style>
+        :root {
+            /* Spotify Color Palette */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-gray: #535353;
+            --spotify-light-gray: #B3B3B3;
+            --spotify-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .data-center-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .section {
+            background-color: var(--spotify-gray);
+            border-radius: 10px;
+            padding: 20px;
+            width: calc(50% - 10px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .power-generator, .pdu {
+            background-color: var(--spotify-light-gray);
+            border: 2px solid var(--spotify-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .power-generator:hover, .pdu:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 10px var(--spotify-green);
+        }
+
+        .esd-zone {
+            background-color: rgba(29, 185, 84, 0.1);
+            border: 2px dashed var(--spotify-green);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-ok {
+            background-color: var(--spotify-green);
+        }
+
+        .status-warning {
+            background-color: orange;
+        }
+
+        .status-error {
+            background-color: red;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simulador de Data Center</h1>
+    
+    <div class="data-center-container">
+        <div class="section" id="power-section">
+            <h2>Generadores y PDUs</h2>
+            <div id="generators-container"></div>
+            <div class="control-buttons">
+                <button onclick="addPowerGenerator()">Agregar Generador</button>
+                <button onclick="addPDU()">Agregar PDU</button>
+            </div>
+        </div>
+
+        <div class="section" id="esd-section">
+            <h2>Zona de Descarga Electrostática (ESD)</h2>
+            <div class="esd-zone" id="esd-zone">
+                <p>Zona Protegida contra Descargas Electrostáticas</p>
+                <div id="esd-devices"></div>
+            </div>
+            <div class="control-buttons">
+                <button onclick="addESDDevice()">Agregar Dispositivo ESD</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PowerGenerator {
+            constructor(id) {
+                this.id = id;
+                this.status = 'ok';
+                this.outputCapacity = Math.floor(Math.random() * 500) + 100; // 100-600 kW
+            }
+
+            toggleStatus() {
+                const statuses = ['ok', 'warning', 'error'];
+                const currentIndex = statuses.indexOf(this.status);
+                this.status = statuses[(currentIndex + 1) % statuses.length];
+                this.render();
+            }
+
+            render() {
+                const container = document.getElementById('generators-container');
+                const existingElement = document.getElementById(`generator-${this.id}`);
+                
+                const statusColors = {
+                    'ok': 'status-ok',
+                    'warning': 'status-warning',
+                    'error': 'status-error'
+                };
+
+                const generatorHTML = `
+                    <div class="power-generator" id="generator-${this.id}">
+                        <span class="status-indicator ${statusColors[this.status]}"></span>
+                        Generador #${this.id}
+                        <br>Capacidad de Salida: ${this.outputCapacity} kW
+                        <div class="control-buttons">
+                            <button onclick="toggleGeneratorStatus(${this.id})">Cambiar Estado</button>
+                            <button onclick="removeGenerator(${this.id})">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+
+                if (existingElement) {
+                    existingElement.outerHTML = generatorHTML;
+                } else {
+                    container.innerHTML += generatorHTML;
+                }
+            }
+        }
+
+        class PDU {
+            constructor(id) {
+                this.id = id;
+                this.status = 'ok';
+                this.outlets = Math.floor(Math.random() * 24) + 8; // 8-32 outlets
+            }
+
+            toggleStatus() {
+                const statuses = ['ok', 'warning', 'error'];
+                const currentIndex = statuses.indexOf(this.status);
+                this.status = statuses[(currentIndex + 1) % statuses.length];
+                this.render();
+            }
+
+            render() {
+                const container = document.getElementById('generators-container');
+                const existingElement = document.getElementById(`pdu-${this.id}`);
+                
+                const statusColors = {
+                    'ok': 'status-ok',
+                    'warning': 'status-warning',
+                    'error': 'status-error'
+                };
+
+                const pduHTML = `
+                    <div class="pdu" id="pdu-${this.id}">
+                        <span class="status-indicator ${statusColors[this.status]}"></span>
+                        PDU #${this.id}
+                        <br>Número de Tomas: ${this.outlets}
+                        <div class="control-buttons">
+                            <button onclick="togglePDUStatus(${this.id})">Cambiar Estado</button>
+                            <button onclick="removePDU(${this.id})">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+
+                if (existingElement) {
+                    existingElement.outerHTML = pduHTML;
+                } else {
+                    container.innerHTML += pduHTML;
+                }
+            }
+        }
+
+        class ESDDevice {
+            constructor(id) {
+                this.id = id;
+                this.status = 'ok';
+                this.type = this.generateRandomType();
+            }
+
+            generateRandomType() {
+                const types = ['Alfombra ESD', 'Pulsera', 'Pinza de Terra', 'Ionizador'];
+                return types[Math.floor(Math.random() * types.length)];
+            }
+
+            toggleStatus() {
+                const statuses = ['ok', 'warning', 'error'];
+                const currentIndex = statuses.indexOf(this.status);
+                this.status = statuses[(currentIndex + 1) % statuses.length];
+                this.render();
+            }
+
+            render() {
+                const container = document.getElementById('esd-devices');
+                const existingElement = document.getElementById(`esd-${this.id}`);
+                
+                const statusColors = {
+                    'ok': 'status-ok',
+                    'warning': 'status-warning',
+                    'error': 'status-error'
+                };
+
+                const esdHTML = `
+                    <div class="esd-device" id="esd-${this.id}">
+                        <span class="status-indicator ${statusColors[this.status]}"></span>
+                        Dispositivo ESD #${this.id}
+                        <br>Tipo: ${this.type}
+                        <div class="control-buttons">
+                            <button onclick="toggleESDStatus(${this.id})">Cambiar Estado</button>
+                            <button onclick="removeESDDevice(${this.id})">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+
+                if (existingElement) {
+                    existingElement.outerHTML = esdHTML;
+                } else {
+                    container.innerHTML += esdHTML;
+                }
+            }
+        }
+
+        const generators = [];
+        const pdus = [];
+        const esdDevices = [];
+
+        function addPowerGenerator() {
+            const newId = generators.length + 1;
+            const generator = new PowerGenerator(newId);
+            generators.push(generator);
+            generator.render();
+        }
+
+        function addPDU() {
+            const newId = pdus.length + 1;
+            const pdu = new PDU(newId);
+            pdus.push(pdu);
+            pdu.render();
+        }
+
+        function addESDDevice() {
+            const newId = esdDevices.length + 1;
+            const device = new ESDDevice(newId);
+            esdDevices.push(device);
+            device.render();
+        }
+
+        function toggleGeneratorStatus(id) {
+            const generator = generators.find(g => g.id === id);
+            if (generator) {
+                generator.toggleStatus();
+            }
+        }
+
+        function togglePDUStatus(id) {
+            const pdu = pdus.find(p => p.id === id);
+            if (pdu) {
+                pdu.toggleStatus();
+            }
+        }
+
+        function toggleESDStatus(id) {
+            const device = esdDevices.find(d => d.id === id);
+            if (device) {
+                device.toggleStatus();
+            }
+        }
+
+        function removeGenerator(id) {
+            const index = generators.findIndex(g => g.id === id);
+            if (index !== -1) {
+                generators.splice(index, 1);
+                document.getElementById(`generator-${id}`).remove();
+            }
+        }
+
+        function removePDU(id) {
+            const index = pdus.findIndex(p => p.id === id);
+            if (index !== -1) {
+                pdus.splice(index, 1);
+                document.getElementById(`pdu-${id}`).remove();
+            }
+        }
+
+        function removeESDDevice(id) {
+            const index = esdDevices.findIndex(d => d.id === id);
+            if (index !== -1) {
+                esdDevices.splice(index, 1);
+                document.getElementById(`esd-${id}`).remove();
+            }
+        }
+
+        // Inicializar con algunos elementos por defecto
+        addPowerGenerator();
+        addPowerGenerator();
+        addPDU();
+        addESDDevice();
+        addESDDevice();
+    </script>
+</body>
+</html>

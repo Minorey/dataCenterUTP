@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Data Center</title>
+    <style>
+        /* Paleta de colores de Spotify */
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-dark-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-gray: #282828;
+            --spotify-light-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar de navegación */
+        .sidebar {
+            width: 250px;
+            background-color: var(--spotify-gray);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-title {
+            color: var(--spotify-green);
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nav-button {
+            background-color: var(--spotify-light-gray);
+            color: var(--spotify-white);
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: var(--spotify-green);
+        }
+
+        /* Área principal de contenido */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Secciones */
+        .section {
+            background-color: var(--spotify-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: var(--spotify-green);
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        /* Tarjetas de estado */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .status-card {
+            background-color: var(--spotify-light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .status-card.online {
+            border-left: 5px solid var(--spotify-green);
+        }
+
+        .status-card.offline {
+            border-left: 5px solid red;
+        }
+
+        /* Gráficos de monitoreo */
+        .monitoring-chart {
+            width: 100%;
+            height: 200px;
+            background-color: var(--spotify-light-gray);
+            margin-top: 15px;
+        }
+
+        /* Logs */
+        .log-section {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            background-color: var(--spotify-light-gray);
+            padding: 10px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar de Navegación -->
+    <div class="sidebar">
+        <h1 class="sidebar-title">Data Center</h1>
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="showSection('mantenimiento')">Mantenimiento</button>
+            <button class="nav-button" onclick="showSection('noc')">Centro de Operaciones de Red</button>
+            <button class="nav-button" onclick="showSection('servidores')">Estado de Servidores</button>
+            <button class="nav-button" onclick="showSection('logs')">Logs del Sistema</button>
+        </div>
+    </div>
+
+    <!-- Área Principal de Contenido -->
+    <div class="main-content">
+        <!-- Sección de Mantenimiento -->
+        <div id="mantenimiento" class="section">
+            <h2 class="section-title">Mantenimiento del Data Center</h2>
+            <div class="status-grid">
+                <div class="status-card online">
+                    <h3>Aire Acondicionado</h3>
+                    <p>Estado: Operativo</p>
+                    <p>Temperatura: 22°C</p>
+                </div>
+                <div class="status-card online">
+                    <h3>Sistema Eléctrico</h3>
+                    <p>Estado: Normal</p>
+                    <p>UPS: 100% Carga</p>
+                </div>
+                <div class="status-card online">
+                    <h3>Seguridad Física</h3>
+                    <p>Estado: Seguro</p>
+                    <p>Accesos: Controlados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de NOC -->
+        <div id="noc" class="section" style="display:none;">
+            <h2 class="section-title">Centro de Operaciones de Red</h2>
+            <div class="status-grid">
+                <div class="status-card online">
+                    <h3>Conectividad</h3>
+                    <p>Estado: Activo</p>
+                    <p>Latencia: 12ms</p>
+                </div>
+                <div class="status-card online">
+                    <h3>Ancho de Banda</h3>
+                    <p>Total: 10 Gbps</p>
+                    <p>Uso: 45%</p>
+                </div>
+                <div class="status-card online">
+                    <h3>Routers</h3>
+                    <p>Total: 12</p>
+                    <p>Operativos: 12</p>
+                </div>
+            </div>
+            <div class="monitoring-chart" id="networkChart"></div>
+        </div>
+
+        <!-- Sección de Servidores -->
+        <div id="servidores" class="section" style="display:none;">
+            <h2 class="section-title">Estado de Servidores</h2>
+            <div class="status-grid">
+                <div class="status-card online">
+                    <h3>Servidor Web</h3>
+                    <p>Estado: Online</p>
+                    <p>Uso de CPU: 35%</p>
+                </div>
+                <div class="status-card online">
+                    <h3>Servidor de Base de Datos</h3>
+                    <p>Estado: Online</p>
+                    <p>Uso de Memoria: 60%</p>
+                </div>
+                <div class="status-card offline">
+                    <h3>Servidor de Backup</h3>
+                    <p>Estado: Offline</p>
+                    <p>Requiere Mantenimiento</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Logs -->
+        <div id="logs" class="section log-section" style="display:none;">
+            <h2 class="section-title">Logs del Sistema</h2>
+            <div class="log-entry">
+                [2024-06-12 10:45:22] Inicio de escaneo de red
+            </div>
+            <div class="log-entry">
+                [2024-06-12 10:46:05] Servidor de backup requiere atención
+            </div>
+            <div class="log-entry">
+                [2024-06-12 10:47:13] Temperatura del data center dentro de parámetros normales
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar secciones
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            const sections = ['mantenimiento', 'noc', 'servidores', 'logs'];
+            sections.forEach(section => {
+                document.getElementById(section).style.display = 'none';
+            });
+
+            // Mostrar sección seleccionada
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Simulación de actualización de datos en tiempo real
+        function updateDataCenterStatus() {
+            const randomValue = () => Math.floor(Math.random() * 100);
+            const statusCards = document.querySelectorAll('.status-card');
+            
+            statusCards.forEach(card => {
+                if (card.querySelector('h3').textContent === 'Aire Acondicionado') {
+                    card.querySelector('p:nth-child(2)').textContent = `Estado: ${Math.random() > 0.9 ? 'Alerta' : 'Operativo'}`;
+                    card.querySelector('p:nth-child(3)').textContent = `Temperatura: ${22 + Math.random() * 5}°C`;
+                }
+                
+                if (card.querySelector('h3').textContent === 'Conectividad') {
+                    card.querySelector('p:nth-child(2)').textContent = `Estado: ${Math.random() > 0.95 ? 'Desconectado' : 'Activo'}`;
+                    card.querySelector('p:nth-child(3)').textContent = `Latencia: ${10 + Math.random() * 10}ms`;
+                }
+            });
+
+            // Agregar un nuevo log cada cierto tiempo
+            const logSection = document.getElementById('logs');
+            const newLogEntry = document.createElement('div');
+            newLogEntry.classList.add('log-entry');
+            newLogEntry.textContent = `[2024-06-12 ${new Date().toLocaleTimeString()}] Estado actualizado: ${['Estable', 'Alerta', 'Normal'][Math.floor(Math.random() * 3)]}`;
+            logSection.insertBefore(newLogEntry, logSection.firstChild);
+        }
+
+        // Actualizar estado cada 5 segundos
+        setInterval(updateDataCenterStatus, 5000);
+    </script>
+</body>
+</html>

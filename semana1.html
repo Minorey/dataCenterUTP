@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 1: Diseño de Data Center</title>
+    <style>
+        :root {
+            /* Spotify Color Palette */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-light-black: #212121;
+            --spotify-white: #FFFFFF;
+            --spotify-gray: #535353;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--spotify-light-black);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 4px solid var(--spotify-green);
+        }
+
+        h1 {
+            color: var(--spotify-green);
+            margin-bottom: 10px;
+        }
+
+        .content-section {
+            background-color: var(--spotify-light-black);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid var(--spotify-green);
+        }
+
+        .activity-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .activity-list li {
+            background-color: var(--spotify-black);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid var(--spotify-green);
+        }
+
+        .topic-section {
+            margin-top: 20px;
+            color: var(--spotify-white);
+        }
+
+        .topic-section h2 {
+            color: var(--spotify-green);
+            border-bottom: 2px solid var(--spotify-green);
+            padding-bottom: 10px;
+        }
+
+        .key-considerations {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .consideration {
+            background-color: var(--spotify-black);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--spotify-green);
+        }
+
+        @media (max-width: 768px) {
+            .key-considerations {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Unidad 1: Consideraciones para la Implantación de un Data Center</h1>
+            <p>Semana 1 | Sesión 1-2</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="content-section">
+            <h2>Temas de Estudio</h2>
+            <div class="topic-section">
+                <h2>1. Elección de la Localización Geográfica</h2>
+                <div class="key-considerations">
+                    <div class="consideration">
+                        <h3>Factores Climáticos</h3>
+                        <p>Evaluar temperatura, humedad, riesgo de desastres naturales y su impacto en la infraestructura del data center.</p>
+                    </div>
+                    <div class="consideration">
+                        <h3>Infraestructura de Conectividad</h3>
+                        <p>Analizar la disponibilidad de múltiples proveedores de internet, rutas de fibra óptica y conexiones de red robustas.</p>
+                    </div>
+                    <div class="consideration">
+                        <h3>Consideraciones Energéticas</h3>
+                        <p>Verificar la estabilidad de la red eléctrica, disponibilidad de fuentes de energía alternativa y costos de electricidad.</p>
+                    </div>
+                    <div class="consideration">
+                        <h3>Aspectos Legales y Regulatorios</h3>
+                        <p>Investigar regulaciones locales, impuestos, incentivos para centros de datos y requisitos de protección de datos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="topic-section">
+                <h2>2. Diseño del Data Center</h2>
+                <div class="key-considerations">
+                    <div class="consideration">
+                        <h3>Arquitectura Física</h3>
+                        <p>Planificar la distribución de espacios, flujos de aire, sistemas de refrigeración y áreas de servidores.</p>
+                    </div>
+                    <div class="consideration">
+                        <h3>Seguridad Física</h3>
+                        <p>Diseñar perímetros de seguridad, sistemas de control de acceso, vigilancia y protección contra intrusiones.</p>
+                    </div>
+                    <div class="consideration">
+                        <h3>Infraestructura de Red</h3>
+                        <p>Configurar topologías de red, switches, routers, y diseñar redundancia y alta disponibilidad.</p>
+                    </div>
+                    <div class="consideration">
+                        <h3>Sistemas de Soporte</h3>
+                        <p>Implementar sistemas de alimentación ininterrumpida (UPS), generadores de respaldo y sistemas contra incendios.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Actividades</h2>
+            <ul class="activity-list">
+                <li>Dinámica de relatos y experiencias sobre el diseño del Data Center</li>
+                <li>Análisis de casos de estudio de implementaciones de data centers exitosas</li>
+                <li>Discusión grupal sobre desafíos y soluciones en la localización y diseño</li>
+                <li>Ejercicio de planificación de un data center hipotético</li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        // Potential future interactivity can be added here
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Página de Diseño de Data Center cargada');
+        });
+    </script>
+</body>
+</html>

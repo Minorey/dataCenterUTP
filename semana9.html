@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador de Data Center</title>
+    <style>
+        :root {
+            /* Paleta de colores de Spotify */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-light-black: #282828;
+            --spotify-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .simulator-section {
+            background-color: var(--spotify-light-black);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .toggle-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background-color: var(--spotify-gray);
+            color: var(--spotify-white);
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+
+        .toggle-btn.active {
+            background-color: var(--spotify-green);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-card {
+            background-color: var(--spotify-black);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .metric {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: var(--spotify-light-black);
+            border-radius: 5px;
+        }
+
+        h1, h2 {
+            color: var(--spotify-green);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulador de Tecnologías de Almacenamiento</h1>
+
+        <div class="toggle-buttons">
+            <button class="toggle-btn active" data-comparison="das-san">DAS vs SAN</button>
+            <button class="toggle-btn" data-comparison="nas-san">NAS vs SAN</button>
+        </div>
+
+        <div id="das-san-section" class="simulator-section">
+            <h2>DAS (Direct Attached Storage) vs SAN (Storage Area Network)</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h3>DAS</h3>
+                    <div class="metric">
+                        <strong>Rendimiento:</strong> Alto pero limitado
+                    </div>
+                    <div class="metric">
+                        <strong>Escalabilidad:</strong> Baja
+                    </div>
+                    <div class="metric">
+                        <strong>Complejidad:</strong> Simple
+                    </div>
+                    <div class="metric">
+                        <strong>Costo:</strong> Más económico
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>SAN</h3>
+                    <div class="metric">
+                        <strong>Rendimiento:</strong> Alto y altamente escalable
+                    </div>
+                    <div class="metric">
+                        <strong>Escalabilidad:</strong> Alta
+                    </div>
+                    <div class="metric">
+                        <strong>Complejidad:</strong> Alta
+                    </div>
+                    <div class="metric">
+                        <strong>Costo:</strong> Más costoso
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="nas-san-section" class="simulator-section" style="display:none;">
+            <h2>NAS (Network Attached Storage) vs SAN (Storage Area Network)</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h3>NAS</h3>
+                    <div class="metric">
+                        <strong>Protocolo:</strong> Basado en archivos (NFS, SMB)
+                    </div>
+                    <div class="metric">
+                        <strong>Latencia:</strong> Mayor
+                    </div>
+                    <div class="metric">
+                        <strong>Uso Típico:</strong> Compartir archivos, backups
+                    </div>
+                    <div class="metric">
+                        <strong>Acceso:</strong> A nivel de archivo
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>SAN</h3>
+                    <div class="metric">
+                        <strong>Protocolo:</strong> Basado en bloques (Fibre Channel, iSCSI)
+                    </div>
+                    <div class="metric">
+                        <strong>Latencia:</strong> Menor
+                    </div>
+                    <div class="metric">
+                        <strong>Uso Típico:</strong> Bases de datos, máquinas virtuales
+                    </div>
+                    <div class="metric">
+                        <strong>Acceso:</strong> A nivel de bloque
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButtons = document.querySelectorAll('.toggle-btn');
+            const dasSanSection = document.getElementById('das-san-section');
+            const nasSanSection = document.getElementById('nas-san-section');
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Desactivar todos los botones
+                    toggleButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Activar el botón clickeado
+                    button.classList.add('active');
+
+                    // Mostrar/ocultar secciones
+                    if (button.dataset.comparison === 'das-san') {
+                        dasSanSection.style.display = 'block';
+                        nasSanSection.style.display = 'none';
+                    } else {
+                        dasSanSection.style.display = 'none';
+                        nasSanSection.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

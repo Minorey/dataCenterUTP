@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador de Sistema de Almacenamiento en Red (SAN)</title>
+    <style>
+        :root {
+            /* Spotify Color Palette */
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-gray: #282828;
+            --spotify-light-gray: #535353;
+            --spotify-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--spotify-black);
+            color: var(--spotify-white);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .san-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .server, .storage, .network {
+            background-color: var(--spotify-gray);
+            border: 2px solid var(--spotify-green);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .server:hover, .storage:hover, .network:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(29, 185, 84, 0.3);
+        }
+
+        .data-block {
+            background-color: var(--spotify-light-gray);
+            margin: 5px 0;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .data-block.writing {
+            animation: writing 0.5s infinite alternate;
+        }
+
+        .data-block.reading {
+            animation: reading 0.5s infinite alternate;
+        }
+
+        @keyframes writing {
+            from { background-color: var(--spotify-light-gray); }
+            to { background-color: #2ebd59; }
+        }
+
+        @keyframes reading {
+            from { background-color: var(--spotify-light-gray); }
+            to { background-color: #1ED760; }
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--spotify-green);
+            color: var(--spotify-black);
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1ED760;
+            transform: scale(1.05);
+        }
+
+        .connection-line {
+            position: absolute;
+            background-color: var(--spotify-green);
+            height: 3px;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: var(--spotify-green);">Simulador de Sistema de Almacenamiento en Red (SAN)</h1>
+    
+    <div class="san-container" id="sanSimulation">
+        <div class="network" style="flex: 2;">
+            <h2>Red SAN</h2>
+            <div id="networkTraffic"></div>
+        </div>
+        <div class="storage" style="flex: 1;">
+            <h2>Almacenamiento</h2>
+            <div id="storageBlocks"></div>
+        </div>
+        <div class="server" style="flex: 1;">
+            <h2>Servidores Conectados</h2>
+            <div id="connectedServers"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="startSimulation">Iniciar Simulación</button>
+        <button id="stopSimulation">Detener Simulación</button>
+    </div>
+
+    <script>
+        class SANSimulation {
+            constructor() {
+                this.servers = [];
+                this.storageBlocks = [];
+                this.isRunning = false;
+                this.simulationInterval = null;
+
+                this.initializeDOM();
+                this.setupEventListeners();
+            }
+
+            initializeDOM() {
+                this.networkTraffic = document.getElementById('networkTraffic');
+                this.storageBlocksContainer = document.getElementById('storageBlocks');
+                this.connectedServersContainer = document.getElementById('connectedServers');
+            }
+
+            setupEventListeners() {
+                document.getElementById('startSimulation').addEventListener('click', () => this.startSimulation());
+                document.getElementById('stopSimulation').addEventListener('click', () => this.stopSimulation());
+            }
+
+            generateServer() {
+                return {
+                    id: `Server-${this.servers.length + 1}`,
+                    status: Math.random() > 0.2 ? 'online' : 'offline',
+                    currentOperation: 'idle'
+                };
+            }
+
+            generateStorageBlock() {
+                return {
+                    id: `Block-${this.storageBlocks.length + 1}`,
+                    capacity: Math.floor(Math.random() * 500) + 100, // 100-600 GB
+                    used: Math.floor(Math.random() * 300)
+                };
+            }
+
+            startSimulation() {
+                if (this.isRunning) return;
+                this.isRunning = true;
+
+                // Generar servidores y bloques de almacenamiento
+                this.servers = Array.from({length: 3}, () => this.generateServer());
+                this.storageBlocks = Array.from({length: 5}, () => this.generateStorageBlock());
+
+                this.renderServers();
+                this.renderStorageBlocks();
+
+                this.simulationInterval = setInterval(() => {
+                    this.simulateNetworkTraffic();
+                    this.updateServerOperations();
+                }, 1000);
+            }
+
+            stopSimulation() {
+                if (!this.isRunning) return;
+                this.isRunning = false;
+                clearInterval(this.simulationInterval);
+                
+                this.networkTraffic.innerHTML = '';
+                this.connectedServersContainer.innerHTML = '';
+                this.storageBlocksContainer.innerHTML = '';
+            }
+
+            renderServers() {
+                this.connectedServersContainer.innerHTML = this.servers.map(server => `
+                    <div class="data-block" id="${server.id}">
+                        ${server.id} - Estado: ${server.status} 
+                        <span>${server.currentOperation}</span>
+                    </div>
+                `).join('');
+            }
+
+            renderStorageBlocks() {
+                this.storageBlocksContainer.innerHTML = this.storageBlocks.map(block => `
+                    <div class="data-block" id="${block.id}">
+                        ${block.id} - Capacidad: ${block.capacity}GB 
+                        (Usado: ${block.used}GB)
+                    </div>
+                `).join('');
+            }
+
+            simulateNetworkTraffic() {
+                const operations = ['Lectura', 'Escritura', 'Transferencia'];
+                const randomOperation = operations[Math.floor(Math.random() * operations.length)];
+                
+                const trafficElement = document.createElement('div');
+                trafficElement.textContent = `${randomOperation}: ${Math.floor(Math.random() * 100)} MB/s`;
+                trafficElement.classList.add('data-block');
+                
+                this.networkTraffic.insertBefore(trafficElement, this.networkTraffic.firstChild);
+                
+                // Limitar a 5 entradas
+                if (this.networkTraffic.children.length > 5) {
+                    this.networkTraffic.removeChild(this.networkTraffic.lastChild);
+                }
+            }
+
+            updateServerOperations() {
+                this.servers.forEach(server => {
+                    if (server.status === 'online') {
+                        const possibleOperations = ['idle', 'reading', 'writing', 'transferring'];
+                        server.currentOperation = possibleOperations[Math.floor(Math.random() * possibleOperations.length)];
+                        
+                        const serverElement = document.getElementById(server.id);
+                        if (serverElement) {
+                            serverElement.classList.remove('reading', 'writing');
+                            if (server.currentOperation === 'reading') {
+                                serverElement.classList.add('reading');
+                            } else if (server.currentOperation === 'writing') {
+                                serverElement.classList.add('writing');
+                            }
+                            serverElement.querySelector('span').textContent = server.currentOperation;
+                        }
+                    }
+                });
+            }
+        }
+
+        // Inicializar la simulación
+        document.addEventListener('DOMContentLoaded', () => {
+            new SANSimulation();
+        });
+    </script>
+</body>
+</html>
